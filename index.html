@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Where Should We Eat? 🍓</title>
+  <meta name="description" content="A very serious, very pink restaurant decision machine." />
+  <meta name="theme-color" content="#ff9ec7" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎀</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mochiy+Pop+One&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="floaties" aria-hidden="true"></div>
+  <div id="bgChar" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <header class="hero">
+      <button id="muteBtn" class="icon-btn" aria-label="Toggle sound">🔊</button>
+      <div class="mascot" id="mascot">
+        <svg class="bunny" viewBox="0 0 120 140" aria-hidden="true">
+          <g stroke="#6b2f4f" stroke-width="2.5">
+            <g class="ear ear-l">
+              <ellipse cx="40" cy="36" rx="13" ry="32" fill="#fff" transform="rotate(-14 40 36)"/>
+              <ellipse cx="40" cy="38" rx="6" ry="21" fill="#ffb3d1" stroke="none" transform="rotate(-14 40 38)"/>
+            </g>
+            <g class="ear ear-r">
+              <ellipse cx="80" cy="36" rx="13" ry="32" fill="#fff" transform="rotate(14 80 36)"/>
+              <ellipse cx="80" cy="38" rx="6" ry="21" fill="#ffb3d1" stroke="none" transform="rotate(14 80 38)"/>
+            </g>
+            <ellipse cx="60" cy="124" rx="27" ry="15" fill="#ff9ec7"/>
+            <ellipse cx="60" cy="86" rx="42" ry="35" fill="#fff"/>
+            <g fill="#f2559a">
+              <path d="M84 58 L70 48 L72 66 Z"/>
+              <path d="M84 58 L98 48 L96 66 Z"/>
+            </g>
+            <circle cx="84" cy="58" r="5" fill="#ff7ab2"/>
+          </g>
+          <ellipse cx="45" cy="86" rx="4.2" ry="5.6" fill="#3b1d2e"/>
+          <ellipse cx="75" cy="86" rx="4.2" ry="5.6" fill="#3b1d2e"/>
+          <circle cx="46.6" cy="84" r="1.7" fill="#fff"/>
+          <circle cx="76.6" cy="84" r="1.7" fill="#fff"/>
+          <ellipse cx="34" cy="98" rx="7" ry="4" fill="#ff9ec7" opacity=".75"/>
+          <ellipse cx="86" cy="98" rx="7" ry="4" fill="#ff9ec7" opacity=".75"/>
+          <ellipse cx="60" cy="94" rx="3.4" ry="2.4" fill="#ff7ab2"/>
+          <path d="M54 99 q3 4 6 0 q3 4 6 0" fill="none" stroke="#6b2f4f" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <img id="mascotImg" alt="" />
+      </div>
+      <div class="bubble-wrap">
+        <h1 id="title">Where Should We Eat?</h1>
+        <p class="speech" id="speech">Hi bestie! Hungry? Let fate pick 💕</p>
+      </div>
+    </header>
+
+    <!-- OPTIONS -->
+    <section class="card">
+      <div class="card-head">
+        <h2>🍱 The Menu of Destiny</h2>
+        <span class="pill" id="count">0 in the game</span>
+      </div>
+      <p class="hint">Tap one to skip it today. Add your own too!</p>
+      <div class="chips" id="chips"></div>
+
+      <form id="addForm" class="add-form" autocomplete="off">
+        <div class="emoji-pick" id="emojiPick" role="radiogroup" aria-label="Pick an emoji"></div>
+        <div class="add-row">
+          <input id="addName" maxlength="32" placeholder="Add a place… e.g. Bubble Tea Heaven" aria-label="Restaurant name" />
+          <button class="btn primary" type="submit">Add ✨</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- GAMES -->
+    <section class="card game-card">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="claw" role="tab">🕹️ Claw Machine</button>
+        <button class="tab" data-tab="race" role="tab">🏁 Bunny Race</button>
+      </div>
+
+      <div class="panel" id="panel-claw">
+        <div class="machine">
+          <div class="marquee">
+            <span class="lights"><i></i><i></i><i></i><i></i></span>
+            <span>CLAW-O-YUM</span>
+            <span class="lights"><i></i><i></i><i></i><i></i></span>
+          </div>
+          <div class="claw-box" id="clawBox">
+            <div class="rail"></div>
+            <div class="claw" id="claw">
+              <div class="rope"></div>
+              <svg class="claw-head" viewBox="0 0 60 56" width="60" height="56" aria-hidden="true">
+                <g class="prong prong-l"><path d="M24 14 Q4 26 13 50 L19 48 Q14 31 28 18 Z" fill="#d9b8ff" stroke="#6b2f4f" stroke-width="2" stroke-linejoin="round"/></g>
+                <g class="prong prong-r"><path d="M36 14 Q56 26 47 50 L41 48 Q46 31 32 18 Z" fill="#d9b8ff" stroke="#6b2f4f" stroke-width="2" stroke-linejoin="round"/></g>
+                <rect x="17" y="1" width="26" height="18" rx="7" fill="#ff8fc0" stroke="#6b2f4f" stroke-width="2"/>
+                <circle cx="30" cy="10" r="3.2" fill="#fff"/>
+              </svg>
+            </div>
+            <div class="chute"><span>PRIZE</span></div>
+          </div>
+          <div class="controls">
+            <button class="ctrl" id="leftBtn" aria-label="Move left">◀</button>
+            <button class="ctrl drop" id="dropBtn">DROP!</button>
+            <button class="ctrl" id="rightBtn" aria-label="Move right">▶</button>
+          </div>
+          <p class="tiny">Hold ◀ ▶ (or arrow keys) · Space to drop · Tries: <b id="tries">0</b></p>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-race" hidden>
+        <div class="ticker" id="ticker">🎙️ Racers, to your marks!</div>
+        <div class="track" id="track"></div>
+        <button class="btn primary big" id="raceBtn">🏁 START THE RACE!</button>
+      </div>
+    </section>
+
+    <footer class="foot">made with 💗 and an empty stomach</footer>
+  </main>
+
+  <!-- RESULT -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultName">
+      <p class="kicker" id="resultKicker">The bunny gods have spoken…</p>
+      <div class="result-emoji" id="resultEmoji">🍜</div>
+      <h2 id="resultName">Domu Hanoi</h2>
+      <p class="result-note" id="resultNote"></p>
+      <div class="modal-actions">
+        <a class="btn primary" id="mapsLink" target="_blank" rel="noopener">Let's goooo 🗺️</a>
+        <button class="btn" id="againBtn">Play again 🔁</button>
+      </div>
+      <button class="link-btn" id="vetoBtn">Ehh… use my one veto 🙅‍♀️</button>
+    </div>
+  </div>
+  <div id="confetti" aria-hidden="true"></div>
+
+  <script src="options.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
