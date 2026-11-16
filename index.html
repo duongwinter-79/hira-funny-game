@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Where Should We Eat? 🍓</title>
-  <meta name="description" content="A very serious, very pink restaurant decision machine." />
+  <title>Linh ơi mình ăn gì thế 🍓</title>
+  <meta name="description" content="Cỗ máy chọn quán ăn siêu hồng, siêu nghiêm túc." />
   <meta name="theme-color" content="#ff9ec7" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎀</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mochiy+Pop+One&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,7 +18,7 @@
 
   <main class="wrap">
     <header class="hero">
-      <button id="muteBtn" class="icon-btn" aria-label="Toggle sound">🔊</button>
+      <button id="muteBtn" class="icon-btn" aria-label="Bật/tắt âm thanh">🔊</button>
       <div class="mascot" id="mascot">
         <svg class="bunny" viewBox="0 0 120 140" aria-hidden="true">
           <g stroke="#6b2f4f" stroke-width="2.5">
@@ -50,25 +50,25 @@
         <img id="mascotImg" alt="" />
       </div>
       <div class="bubble-wrap">
-        <h1 id="title">Where Should We Eat?</h1>
-        <p class="speech" id="speech">Hi bestie! Hungry? Let fate pick 💕</p>
+        <h1 id="title">Linh ơi mình ăn gì thế</h1>
+        <p class="speech" id="speech">Linh ơi đói chưa? Để số phận chọn nha 💕</p>
       </div>
     </header>
 
     <!-- OPTIONS -->
     <section class="card">
       <div class="card-head">
-        <h2>🍱 The Menu of Destiny</h2>
-        <span class="pill" id="count">0 in the game</span>
+        <h2>🍱 Thực Đơn Định Mệnh</h2>
+        <span class="pill" id="count">0 quán đang chơi</span>
       </div>
-      <p class="hint">Tap one to skip it today. Add your own too!</p>
+      <p class="hint">Chạm vào quán nào để bỏ qua hôm nay. Thêm quán của bạn nữa nha!</p>
       <div class="chips" id="chips"></div>
 
       <form id="addForm" class="add-form" autocomplete="off">
-        <div class="emoji-pick" id="emojiPick" role="radiogroup" aria-label="Pick an emoji"></div>
+        <div class="emoji-pick" id="emojiPick" role="radiogroup" aria-label="Chọn emoji"></div>
         <div class="add-row">
-          <input id="addName" maxlength="32" placeholder="Add a place… e.g. Bubble Tea Heaven" aria-label="Restaurant name" />
-          <button class="btn primary" type="submit">Add ✨</button>
+          <input id="addName" maxlength="32" placeholder="Thêm quán… vd: Trà sữa Thiên Đường" aria-label="Tên quán" />
+          <button class="btn primary" type="submit">Thêm ✨</button>
         </div>
       </form>
     </section>
@@ -76,15 +76,15 @@
     <!-- GAMES -->
     <section class="card game-card">
       <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="claw" role="tab">🕹️ Claw Machine</button>
-        <button class="tab" data-tab="race" role="tab">🏁 Bunny Race</button>
+        <button class="tab active" data-tab="claw" role="tab">🕹️ Máy Gắp</button>
+        <button class="tab" data-tab="race" role="tab">🏁 Thỏ Đua</button>
       </div>
 
       <div class="panel" id="panel-claw">
         <div class="machine">
           <div class="marquee">
             <span class="lights"><i></i><i></i><i></i><i></i></span>
-            <span>CLAW-O-YUM</span>
+            <span>GẮP LÀ DÍNH</span>
             <span class="lights"><i></i><i></i><i></i><i></i></span>
           </div>
           <div class="claw-box" id="clawBox">
@@ -98,39 +98,39 @@
                 <circle cx="30" cy="10" r="3.2" fill="#fff"/>
               </svg>
             </div>
-            <div class="chute"><span>PRIZE</span></div>
+            <div class="chute"><span>QUÀ</span></div>
           </div>
           <div class="controls">
-            <button class="ctrl" id="leftBtn" aria-label="Move left">◀</button>
-            <button class="ctrl drop" id="dropBtn">DROP!</button>
-            <button class="ctrl" id="rightBtn" aria-label="Move right">▶</button>
+            <button class="ctrl" id="leftBtn" aria-label="Sang trái">◀</button>
+            <button class="ctrl drop" id="dropBtn">GẮP!</button>
+            <button class="ctrl" id="rightBtn" aria-label="Sang phải">▶</button>
           </div>
-          <p class="tiny">Hold ◀ ▶ (or arrow keys) · Space to drop · Tries: <b id="tries">0</b></p>
+          <p class="tiny">Giữ ◀ ▶ (hoặc phím mũi tên) · Space để gắp · Lượt: <b id="tries">0</b></p>
         </div>
       </div>
 
       <div class="panel" id="panel-race" hidden>
-        <div class="ticker" id="ticker">🎙️ Racers, to your marks!</div>
+        <div class="ticker" id="ticker">🎙️ Các tay đua vào vị trí!</div>
         <div class="track" id="track"></div>
-        <button class="btn primary big" id="raceBtn">🏁 START THE RACE!</button>
+        <button class="btn primary big" id="raceBtn">🏁 BẮT ĐẦU ĐUA!</button>
       </div>
     </section>
 
-    <footer class="foot">made with 💗 and an empty stomach</footer>
+    <footer class="foot">làm bằng 💗 và một chiếc bụng đói</footer>
   </main>
 
   <!-- RESULT -->
   <div class="modal" id="modal" hidden>
     <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="resultName">
-      <p class="kicker" id="resultKicker">The bunny gods have spoken…</p>
+      <p class="kicker" id="resultKicker">Thần thỏ đã phán…</p>
       <div class="result-emoji" id="resultEmoji">🍜</div>
       <h2 id="resultName">Domu Hanoi</h2>
       <p class="result-note" id="resultNote"></p>
       <div class="modal-actions">
-        <a class="btn primary" id="mapsLink" target="_blank" rel="noopener">Let's goooo 🗺️</a>
-        <button class="btn" id="againBtn">Play again 🔁</button>
+        <a class="btn primary" id="mapsLink" target="_blank" rel="noopener">Đi thôiii 🗺️</a>
+        <button class="btn" id="againBtn">Chơi lại 🔁</button>
       </div>
-      <button class="link-btn" id="vetoBtn">Ehh… use my one veto 🙅‍♀️</button>
+      <button class="link-btn" id="vetoBtn">Ơ thôi… dùng quyền phủ quyết 🙅‍♀️</button>
     </div>
   </div>
   <div id="confetti" aria-hidden="true"></div>

@@ -6,7 +6,7 @@
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const rand = (a, b) => a + Math.random() * (b - a);
-  const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const slug = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d").toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const shuffle = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
   const PASTELS = ["#ffc2dc", "#ffd6a5", "#caffbf", "#bde0fe", "#e9dcff", "#fdffb6", "#ffadad", "#c9f2e3", "#ffe0f0", "#d0f4ff"];
@@ -26,7 +26,7 @@
 
   const allOptions = () => [...defaults, ...custom];
   const activeOptions = () => allOptions().filter((o) => !off.has(o.id));
-  const friend = C.friendName || "bestie";
+  const friend = C.friendName || "bạn ơi";
 
   // ── sound (tiny synth, no files) ──
   let actx;
@@ -105,7 +105,7 @@
       chip.style.setProperty("--c", o.color);
       const main = document.createElement("button");
       main.type = "button"; main.className = "chip-main";
-      main.title = off.has(o.id) ? "Skipped today — tap to bring back" : "Tap to skip today";
+      main.title = off.has(o.id) ? "Hôm nay bỏ qua — chạm để thêm lại" : "Chạm để bỏ qua hôm nay";
       const em = document.createElement("span"); em.className = "chip-emoji"; em.textContent = o.emoji;
       const nm = document.createElement("span"); nm.className = "chip-name"; nm.textContent = o.name;
       main.append(em, nm);
@@ -113,14 +113,14 @@
       chip.append(main);
       if (!o.builtIn) {
         const del = document.createElement("button");
-        del.type = "button"; del.className = "chip-del"; del.textContent = "×"; del.title = "Remove";
+        del.type = "button"; del.className = "chip-del"; del.textContent = "×"; del.title = "Xoá";
         del.onclick = () => removeOption(o);
         chip.append(del);
       }
       chipsEl.append(chip);
     }
     const n = activeOptions().length;
-    $("#count").textContent = `${n} in the game`;
+    $("#count").textContent = `${n} quán đang chơi`;
   }
   function optionsChanged(newId) {
     save("mfp.custom", custom);
@@ -129,15 +129,15 @@
     resetCurrentGame();
   }
   function toggleOption(o) {
-    if (busy) return say("Wait till the game ends, hehe 🙈");
-    if (off.has(o.id)) { off.delete(o.id); say(`${o.name} is back in the game! ${o.emoji}`); }
-    else { off.add(o.id); say(`Bye bye ${o.name}… not today 👋`); }
+    if (busy) return say("Đợi chơi xong đã nha, hihi 🙈");
+    if (off.has(o.id)) { off.delete(o.id); say(`${o.name} đã quay lại cuộc chơi! ${o.emoji}`); }
+    else { off.add(o.id); say(`Bye bye ${o.name}… hôm nay không nha 👋`); }
     sfx.pop(); optionsChanged();
   }
   function removeOption(o) {
-    if (busy) return say("Wait till the game ends, hehe 🙈");
+    if (busy) return say("Đợi chơi xong đã nha, hihi 🙈");
     custom = custom.filter((c) => c.id !== o.id); off.delete(o.id);
-    say(`${o.name} has left the chat 🫥`); sfx.pop(); optionsChanged();
+    say(`${o.name} đã rời nhóm chat 🫥`); sfx.pop(); optionsChanged();
   }
 
   // emoji picker + add form
@@ -153,14 +153,14 @@
     };
     pickEl.append(b);
   });
-  const REACT = ["Ooh {n}! Great taste~ 💖", "{n}?! Yes queen 👑", "Adding {n} to the menu of destiny ✨", "{n} has entered the arena 😤", "Mmm, {n} sounds yummy 🤤"];
+  const REACT = ["Ồ {n}! Gu xịn ghê~ 💖", "{n}?! Chuẩn luôn 👑", "Thêm {n} vào thực đơn định mệnh ✨", "{n} đã tham chiến 😤", "{n} nghe ngon ghê 🤤"];
   $("#addForm").addEventListener("submit", (ev) => {
     ev.preventDefault();
     const input = $("#addName");
     const name = input.value.trim().replace(/\s+/g, " ");
-    if (!name) { input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake"); return say("Type a place first, silly 🙃"); }
-    if (busy) return say("Wait till the game ends, hehe 🙈");
-    if (allOptions().some((o) => o.name.toLowerCase() === name.toLowerCase())) return say(`${name} is already on the list! 👀`);
+    if (!name) { input.classList.remove("shake"); void input.offsetWidth; input.classList.add("shake"); return say("Gõ tên quán trước đã nha 🙃"); }
+    if (busy) return say("Đợi chơi xong đã nha, hihi 🙈");
+    if (allOptions().some((o) => o.name.toLowerCase() === name.toLowerCase())) return say(`${name} có trong danh sách rồi nè! 👀`);
     const id = "c-" + Date.now().toString(36);
     custom.push({ id, name, emoji: chosenEmoji, color: PASTELS[(allOptions().length) % PASTELS.length] });
     input.value = "";
@@ -177,14 +177,14 @@
       $("#panel-claw").hidden = tab !== "claw";
       $("#panel-race").hidden = tab !== "race";
       sfx.pop(); resetCurrentGame();
-      say(tab === "claw" ? "Steer the claw and grab a yummy capsule! 🕹️" : "Place your bets! Who's the fastest snack? 🏁");
+      say(tab === "claw" ? "Điều khiển càng gắp, gắp một viên ngon nha! 🕹️" : "Đặt cược đi! Món nào chạy nhanh nhất? 🏁");
     };
   });
   function resetCurrentGame() { tab === "claw" ? setupClaw() : setupRace(); }
 
   function needTwo() {
     if (activeOptions().length >= 2) return false;
-    say(activeOptions().length ? "Only one option? That's not a choice, that's destiny 😂 Add more!" : "The menu is empty! Add some places 🥺");
+    say(activeOptions().length ? "Có mỗi một quán thì đâu phải lựa chọn, đó là định mệnh 😂 Thêm quán đi!" : "Thực đơn trống trơn! Thêm vài quán nha 🥺");
     return true;
   }
 
@@ -281,9 +281,9 @@
   });
   document.addEventListener("keyup", (e) => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") stopMove(); });
 
-  const AIR = ["You caught… air. Delicious 💨", "Nothing there, silly! 🙃", "The claw is hungry too, but that was empty 😂", "Whiff! Aim for a capsule~ 🎯"];
-  const SLIP = ["Butterfingers! 🧈", "Slippery noodles!! 🍜💦", "It said 'not today' 😤", "Rigged?! Nooo 😭", "The claw got shy 🙈", "Almost!! Try again bestie 💪"];
-  const GOT = ["GOT IT!! 🎉", "Yesss, she did it! ✨", "Claw queen 👑"];
+  const AIR = ["Gắp được… không khí. Ngon ghê 💨", "Chỗ đó trống mà, ngốc ơi 🙃", "Càng gắp cũng đói, mà chỗ đó trống trơn 😂", "Hụt! Nhắm vào viên nào đó đi~ 🎯"];
+  const SLIP = ["Tuột tay rồiii! 🧈", "Trơn như sợi mì!! 🍜💦", "Nó bảo 'hôm nay thì không' 😤", "Máy gian lận hả?! Huhu 😭", "Càng gắp ngại ngùng quá 🙈", "Suýt nữa!! Thử lại nha {f} 💪"];
+  const GOT = ["DÍNH RỒI!! 🎉", "Yeahhh, làm được rồi! ✨", "Nữ hoàng gắp thú 👑"];
 
   $("#dropBtn").onclick = () => drop();
   async function drop() {
@@ -291,7 +291,7 @@
     if (capsules.length < 2) setupClaw();
     stopMove(); setBusy(true);
     tries++; $("#tries").textContent = tries;
-    sfx.drop(); say("Here we gooo… 🫣");
+    sfx.drop(); say("Bắt đầu nè… 🫣");
     claw.open = true; renderClaw(); await sleep(250);
 
     const s = capsules[0].s, tol = widthPct(s) * 0.55;
@@ -312,7 +312,7 @@
       await sleep(120);
       under.attached = false; under.el.classList.remove("grabbed");
       claw.open = true; renderClaw();
-      sfx.fail(); say(pick(SLIP)); fails++;
+      sfx.fail(); say(pick(SLIP).replace("{f}", friend)); fails++;
       under.x = clamp(under.x + rand(-12, 12), 24, 92);
       await settle();
       claw.open = false;
@@ -321,7 +321,7 @@
     }
 
     await tween(claw, { rope: REST }, 850, ease.inOut, renderClaw);
-    sfx.boing(); say("Ooh ooh ooh… 👀");
+    sfx.boing(); say("Ồ ồ ồ… 👀");
     await tween(claw, { x: CHUTE_X }, 300 + Math.abs(claw.x - CHUTE_X) * 16, ease.inOut, renderClaw);
     await sleep(200);
     claw.open = true; under.attached = false; renderClaw();
@@ -330,7 +330,7 @@
     fails = 0; claw.open = false; renderClaw();
     say(pick(GOT));
     await settle();
-    win(under.opt, `After ${tries} ${tries === 1 ? "try" : "tries"}, the claw has chosen…`);
+    win(under.opt, `Sau ${tries} lượt, máy gắp đã chọn…`);
   }
 
   // ═════════════════ BUNNY RACE ═════════════════
@@ -352,8 +352,8 @@
       return { opt: o, lane, run, runner, status, p: 0, sleep: 0, boost: 0, rev: 0, kind: "" };
     });
     renderRace();
-    if (!racers.length) ticker("🎙️ No racers?! Add some places above 🥺");
-    else ticker(`🎙️ ${racers.length} hungry racers at the starting line!`);
+    if (!racers.length) ticker("🎙️ Không có tay đua?! Thêm quán ở trên nha 🥺");
+    else ticker(`🎙️ ${racers.length} tay đua đói bụng đã vào vạch xuất phát!`);
   }
   function renderRace() {
     for (const r of racers) {
@@ -368,22 +368,22 @@
   }
 
   const EVENTS = [
-    { bad: true,  f: (r) => { r.sleep = 1500; setStatus(r, "sleep", "💤"); return `💤 ${r.opt.name} decided it's nap time. Classic.`; } },
-    { bad: true,  f: (r) => { r.sleep = 1000; setStatus(r, "selfie", "📸"); return `📸 ${r.opt.name} stopped for a cute selfie!`; } },
-    { bad: true,  f: (r) => { r.p = Math.max(0, r.p - 7); sfx.fail(); return `😵 ${r.opt.name} tripped on a noodle!!`; } },
-    { bad: true,  f: (r) => { r.rev = 1100; setStatus(r, "rev", "🔄"); return `🔄 ${r.opt.name} is running the WRONG WAY 😭`; } },
-    { bad: false, f: (r) => { r.boost = 1300; setStatus(r, "", "⚡"); return `⚡ ${r.opt.name} smelled free samples! ZOOM!`; } },
-    { bad: false, f: (r) => { r.p += 9; sfx.boing(); return `🚀 ${r.opt.name} found a secret shortcut?!`; } },
-    { bad: false, f: (r) => { r.boost = 900; setStatus(r, "", "💖"); return `💖 ${r.opt.name} got cheered on by ${friend}!`; } },
+    { bad: true,  f: (r) => { r.sleep = 1500; setStatus(r, "sleep", "💤"); return `💤 ${r.opt.name} quyết định đi ngủ trưa. Đúng bài.`; } },
+    { bad: true,  f: (r) => { r.sleep = 1000; setStatus(r, "selfie", "📸"); return `📸 ${r.opt.name} dừng lại chụp ảnh sống ảo!`; } },
+    { bad: true,  f: (r) => { r.p = Math.max(0, r.p - 7); sfx.fail(); return `😵 ${r.opt.name} vấp phải sợi mì!!`; } },
+    { bad: true,  f: (r) => { r.rev = 1100; setStatus(r, "rev", "🔄"); return `🔄 ${r.opt.name} chạy NGƯỢC CHIỀU rồi 😭`; } },
+    { bad: false, f: (r) => { r.boost = 1300; setStatus(r, "", "⚡"); return `⚡ ${r.opt.name} ngửi thấy đồ ăn thử miễn phí! VÈOOO!`; } },
+    { bad: false, f: (r) => { r.p += 9; sfx.boing(); return `🚀 ${r.opt.name} tìm được đường tắt bí mật?!`; } },
+    { bad: false, f: (r) => { r.boost = 900; setStatus(r, "", "💖"); return `💖 ${r.opt.name} được ${friend} cổ vũ!`; } },
   ];
 
   $("#raceBtn").onclick = () => startRace();
   async function startRace() {
     if (busy || tab !== "race" || needTwo()) return;
     setupRace(); setBusy(true);
-    say("Who will win?! I can't look 🙈");
+    say("Ai sẽ thắng đây?! Không dám nhìn 🙈");
     for (const n of ["3", "2", "1"]) { ticker(`⏱️ ${n}…`); sfx.beep(false); await sleep(650); }
-    ticker("🏁 GOOOOO!"); sfx.beep(true);
+    ticker("🏁 CHẠYYYY!"); sfx.beep(true);
     racers.forEach((r) => r.lane.classList.add("running"));
 
     const winner = await new Promise((resolve) => {
@@ -418,13 +418,13 @@
     racers.forEach((r) => { r.lane.classList.remove("running"); setStatus(r, ""); });
     winner.lane.classList.add("winner");
     const second = [...racers].sort((a, b) => b.p - a.p)[1];
-    ticker(second && winner.p - second.p < 4 ? `📸 PHOTO FINISH!! ${winner.opt.name} wins by a whisker! 🐰` : `🏆 ${winner.opt.name} WINS THE RACE!`);
+    ticker(second && winner.p - second.p < 4 ? `📸 VỀ ĐÍCH SÁT NÚT!! ${winner.opt.name} thắng trong gang tấc! 🐰` : `🏆 ${winner.opt.name} VÔ ĐỊCH!`);
     await sleep(900);
-    win(winner.opt, "The fastest snack in the west is…");
+    win(winner.opt, "Món chạy nhanh nhất vũ trụ là…");
   }
 
   // ═════════════════ RESULT ═════════════════
-  const NOTES = ["Your tummy has been heard 🫶", "No take-backs! (ok maybe one…) 😝", "Destiny is delicious ✨", "The bunny gods are never wrong 🐰"];
+  const NOTES = ["Bụng của bạn đã được lắng nghe 🫶", "Không được đổi ý! (thôi được, một lần…) 😝", "Định mệnh ngon lành ✨", "Thần thỏ không bao giờ sai 🐰"];
   let lastWinner = null;
   function win(opt, kicker) {
     lastWinner = opt;
@@ -436,20 +436,20 @@
     $("#mapsLink").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(opt.maps || opt.name);
     const veto = $("#vetoBtn");
     veto.disabled = vetoLeft <= 0;
-    veto.textContent = vetoLeft > 0 ? "Ehh… use my one veto 🙅‍♀️" : "No vetoes left. It's fate now 😈";
+    veto.textContent = vetoLeft > 0 ? "Ơ thôi… dùng quyền phủ quyết 🙅‍♀️" : "Hết quyền phủ quyết rồi. Định mệnh đó 😈";
     $("#modal").hidden = false;
     sfx.win(); confetti();
-    say(`${opt.name} it is!! ${opt.emoji} Yay~`);
+    say(`Chốt ${opt.name} nha!! ${opt.emoji} Yeee~`);
     $("#againBtn").focus({ preventScroll: true });
   }
   function closeModal() { $("#modal").hidden = true; }
-  $("#againBtn").onclick = () => { closeModal(); resetCurrentGame(); say("Again?! Ok ok, one more time 😆"); };
+  $("#againBtn").onclick = () => { closeModal(); resetCurrentGame(); say("Nữa hả?! Ok ok, thêm lần nữa 😆"); };
   $("#vetoBtn").onclick = () => {
     if (vetoLeft <= 0 || !lastWinner) return;
     vetoLeft--;
     off.add(lastWinner.id);
     closeModal(); sfx.fail();
-    say(`VETOED! 🙅‍♀️ ${lastWinner.name} is out (tap it in the list to bring it back).`);
+    say(`PHỦ QUYẾT! 🙅‍♀️ ${lastWinner.name} bị loại (chạm vào nó trong danh sách để đưa lại nha).`);
     optionsChanged();
   };
   $("#modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
@@ -471,8 +471,9 @@
   }
 
   // ═════════════════ BOOT ═════════════════
-  $("#title").textContent = C.title || "Where Should We Eat?";
-  say(`Hi ${friend}! Hungry? Let fate pick 💕`);
+  $("#title").textContent = C.title || "Mình ăn gì thế";
+  if (C.title) document.title = C.title + " 🍓";
+  say(`${friend} ơi đói chưa? Để số phận chọn nha 💕`);
 
   const muteBtn = $("#muteBtn");
   const paintMute = () => (muteBtn.textContent = muted ? "🔇" : "🔊");

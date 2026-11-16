@@ -14,13 +14,13 @@
 //   uses its built-in pink bunny mascot instead.
 
 window.CONFIG = {
-  title: "Where Should We Eat?",
-  friendName: "bestie",
+  title: "Linh ơi mình ăn gì thế",
+  friendName: "Linh",
   backgroundImage: "assets/melody.png",
 
   restaurants: [
-    { name: "Domu Hanoi",          emoji: "🍜", note: "Pho, bún chả & good vibes~" },
-    { name: "Tokyo Tan Tan Ramen", emoji: "🍥", note: "Spicy sesame slurp time!" },
-    { name: "Ottugi Restaurant",   emoji: "🍲", note: "Cozy Korean comfort food 💕" },
+    { name: "Túi mù sít rịt",      emoji: "🎁", note: "Bóc túi mù thôiii, hên xui nha~ 🎁" },
+    { name: "Tokyo Tan Tan Ramen", emoji: "🍥", note: "Giờ húp mì mè cay nè! 🔥" },
+    { name: "Ottugi Restaurant",   emoji: "🍲", note: "Món Hàn ấm bụng ấm lòng 💕" },
   ],
 };

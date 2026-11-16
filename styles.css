@@ -19,7 +19,7 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Fredoka", system-ui, sans-serif;
+  font-family: "Baloo 2", system-ui, sans-serif;
   color: var(--ink);
   background-color: var(--pink-100);
   background-image:
@@ -72,8 +72,8 @@ body.has-char .mascot img { display: block; }
 
 .bubble-wrap { flex: 1; min-width: 0; padding-right: 44px; }
 h1 {
-  margin: 0 0 8px; font-family: "Mochiy Pop One", "Fredoka", sans-serif; font-weight: 400;
-  font-size: clamp(24px, 6.4vw, 36px); line-height: 1.1; color: var(--pink-500);
+  margin: 0 0 8px; font-family: "Baloo 2", sans-serif; font-weight: 800;
+  font-size: clamp(26px, 7vw, 40px); line-height: 1.05; color: var(--pink-500);
   text-shadow: 3px 3px 0 #fff, 5px 5px 0 var(--pink-200);
 }
 .speech {
@@ -165,7 +165,7 @@ body.busy .tab:not(.active) { opacity: .5; }
 }
 .marquee {
   display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--ink); color: #fff;
-  border-radius: 14px; padding: 6px 10px; margin-bottom: 10px; font-family: "Mochiy Pop One", sans-serif; font-size: 15px; letter-spacing: 1px;
+  border-radius: 14px; padding: 6px 10px; margin-bottom: 10px; font-family: "Baloo 2", sans-serif; font-weight: 800; font-size: 16px; letter-spacing: 1px;
 }
 .lights { display: inline-flex; gap: 5px; }
 .lights i { width: 7px; height: 7px; border-radius: 50%; background: #ffe066; animation: blink 1s infinite; }
@@ -198,7 +198,7 @@ body.busy .tab:not(.active) { opacity: .5; }
   border-top: 3px solid var(--ink); border-right: 3px solid var(--ink); border-top-right-radius: 12px;
   display: flex; align-items: flex-end; justify-content: center; padding-bottom: 14px;
 }
-.chute span { font-family: "Mochiy Pop One", sans-serif; font-size: 11px; color: var(--ink); background: #fff; border-radius: 8px; padding: 2px 5px; border: 2px solid var(--ink); }
+.chute span { font-weight: 800; font-size: 11px; color: var(--ink); background: #fff; border-radius: 8px; padding: 2px 5px; border: 2px solid var(--ink); }
 
 .capsule { position: absolute; transform: translateX(-50%); z-index: 2; }
 .capsule .ball {
@@ -226,7 +226,7 @@ body.busy .tab:not(.active) { opacity: .5; }
   box-shadow: 0 5px 0 var(--ink); user-select: none; -webkit-user-select: none; touch-action: none;
 }
 .ctrl:active, .ctrl.held { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
-.ctrl.drop { flex: 1.6; background: #ffe066; font-family: "Mochiy Pop One", sans-serif; font-size: 20px; }
+.ctrl.drop { flex: 1.6; background: #ffe066; font-weight: 800; font-size: 24px; }
 .ctrl:disabled { opacity: .55; }
 .tiny { margin: 10px 0 0; text-align: center; font-size: 12.5px; color: #fff; font-weight: 600; text-shadow: 1px 1px 0 var(--berry); }
 
@@ -281,7 +281,7 @@ body.busy .tab:not(.active) { opacity: .5; }
 .result-emoji { font-size: 84px; line-height: 1.15; animation: spinIn .9s cubic-bezier(.3,1.5,.5,1); }
 @keyframes spinIn { from { transform: rotate(-360deg) scale(0); } }
 .modal-card h2 {
-  margin: 4px 0 4px; font-family: "Mochiy Pop One", sans-serif; font-weight: 400; font-size: clamp(22px, 7vw, 30px);
+  margin: 4px 0 4px; font-weight: 800; font-size: clamp(22px, 7vw, 30px);
   color: var(--pink-500); text-shadow: 2px 2px 0 var(--pink-200); overflow-wrap: anywhere;
 }
 .result-note { margin: 0 0 16px; font-weight: 500; }
