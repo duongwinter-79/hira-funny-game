@@ -164,6 +164,10 @@
     const id = "c-" + Date.now().toString(36);
     custom.push({ id, name, emoji: chosenEmoji, color: PASTELS[(allOptions().length) % PASTELS.length] });
     input.value = "";
+    // move the picker to an emoji nobody uses yet, so each place looks different
+    const used = new Set(allOptions().map((o) => o.emoji));
+    const next = FOOD_EMOJI.find((e) => !used.has(e));
+    if (next) pickEl.querySelectorAll("button")[FOOD_EMOJI.indexOf(next)].click();
     sfx.pop(); say(pick(REACT).replace("{n}", name));
     optionsChanged(id);
   });
@@ -194,7 +198,7 @@
   const claw = { x: 55, rope: REST, open: false };
   let capsules = [], tries = 0, fails = 0;
 
-  const capSize = (n) => (n <= 6 ? 64 : n <= 10 ? 54 : 44);
+  const capSize = (n) => (n <= 6 ? 64 : n <= 10 ? 54 : n <= 16 ? 48 : 42);
   const floorY = (s) => box.clientHeight - s - 22;
   const widthPct = (s) => (s / (box.clientWidth || 360)) * 100;
 
@@ -226,7 +230,13 @@
     box.querySelectorAll(".capsule").forEach((e) => e.remove());
     capsules = [];
     claw.x = 55; claw.rope = REST; claw.open = false;
-    const opts = shuffle(activeOptions());
+    // fill the machine with ~12-15 capsules: each option gets several copies
+    const base = activeOptions();
+    let copies = base.length ? Math.max(1, Math.round(13.5 / base.length)) : 0;
+    while (copies > 1 && base.length * copies > 16) copies--;
+    const opts = shuffle(base.flatMap((o) => Array(copies).fill(o)));
+    renderLegend(base);
+    box.classList.toggle("many", opts.length > 6);
     if (!opts.length || !box.clientWidth) return renderClaw();
     const s = capSize(opts.length), sp = widthPct(s);
     const minX = 22 + sp / 2, maxX = 97 - sp / 2;
@@ -235,21 +245,39 @@
       const row = Math.floor(i / perRow), col = i % perRow;
       const n = Math.min(perRow, opts.length - row * perRow);
       let x = n > 1 ? minX + (col * (maxX - minX)) / (n - 1) : (minX + maxX) / 2;
-      x = clamp(x + rand(-0.15, 0.15) * sp + (row % 2 ? sp * 0.3 : 0), minX, maxX);
+      x = clamp(x + rand(-0.35, 0.35) * sp + (row % 2 ? sp * 0.4 : 0), minX, maxX);
       capsules.push(makeCapsule(o, x, floorY(s) - row * s * 0.74, s));
     });
+    settle(true); // let the jittered pile drop into a messy heap
     renderClaw();
   }
 
+  // little "which emoji is which" key under the machine
+  function renderLegend(list) {
+    const lg = $("#clawLegend");
+    lg.innerHTML = "";
+    for (const o of list) {
+      const s = document.createElement("span");
+      s.style.setProperty("--c", o.color);
+      s.textContent = `${o.emoji} ${o.name}`;
+      lg.append(s);
+    }
+  }
+
   // drop floating capsules onto the pile
-  function settle() {
+  function settle(instant) {
     const done = [], anims = [];
+    const W = box.clientWidth || 360;
     for (const c of capsules.filter((c) => !c.attached).sort((a, b) => b.y - a.y)) {
-      const sp = widthPct(c.s);
       let y = floorY(c.s);
-      for (const o of done) if (Math.abs(o.x - c.x) < sp * 0.85) y = Math.min(y, o.ty - c.s * 0.74);
+      // rest on a ball below where the two circles touch, so balls nestle into gaps
+      for (const o of done) {
+        const dx = ((o.x - c.x) / 100) * W;
+        if (Math.abs(dx) < c.s * 0.92) y = Math.min(y, o.ty - Math.sqrt(c.s * c.s - dx * dx) * 0.94);
+      }
       c.ty = y; done.push(c);
-      if (Math.abs(y - c.y) > 1) anims.push(tween(c, { y }, 550, ease.bounce, renderClaw));
+      if (instant) c.y = y;
+      else if (Math.abs(y - c.y) > 1) anims.push(tween(c, { y }, 550, ease.bounce, renderClaw));
     }
     return Promise.all(anims);
   }

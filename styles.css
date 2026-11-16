@@ -216,6 +216,7 @@ body.busy .tab:not(.active) { opacity: .5; }
   font-size: 10.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   background: #fff; border: 1.5px solid var(--ink); border-radius: 8px; padding: 0 5px; z-index: 1;
 }
+.claw-box.many .cap-label { display: none; }
 .capsule.grabbed { z-index: 4; }
 .capsule.grabbed .ball { animation: jiggle .3s infinite; }
 @keyframes jiggle { 50% { transform: rotate(6deg); } }
@@ -228,6 +229,11 @@ body.busy .tab:not(.active) { opacity: .5; }
 .ctrl:active, .ctrl.held { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
 .ctrl.drop { flex: 1.6; background: #ffe066; font-weight: 800; font-size: 24px; }
 .ctrl:disabled { opacity: .55; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 12px; }
+.legend span {
+  background: var(--c); border: 2px solid var(--ink); border-radius: 999px; padding: 1px 10px;
+  font-size: 13px; font-weight: 700; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .tiny { margin: 10px 0 0; text-align: center; font-size: 12.5px; color: #fff; font-weight: 600; text-shadow: 1px 1px 0 var(--berry); }
 
 /* ── race ── */
