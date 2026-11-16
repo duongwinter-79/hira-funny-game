@@ -92,7 +92,7 @@
   function setBusy(b) {
     busy = b;
     document.body.classList.toggle("busy", b);
-    ["#dropBtn", "#leftBtn", "#rightBtn", "#raceBtn"].forEach((s) => ($(s).disabled = b));
+    ["#dropBtn", "#leftBtn", "#rightBtn", "#shakeBtn", "#raceBtn"].forEach((s) => ($(s).disabled = b));
   }
 
   // ── options UI ──
@@ -238,18 +238,48 @@
     renderLegend(base);
     box.classList.toggle("many", opts.length > 6);
     if (!opts.length || !box.clientWidth) return renderClaw();
-    const s = capSize(opts.length), sp = widthPct(s);
-    const minX = 22 + sp / 2, maxX = 97 - sp / 2;
-    const perRow = Math.max(1, Math.floor((maxX - minX) / (sp * 1.08)) + 1);
-    opts.forEach((o, i) => {
-      const row = Math.floor(i / perRow), col = i % perRow;
-      const n = Math.min(perRow, opts.length - row * perRow);
-      let x = n > 1 ? minX + (col * (maxX - minX)) / (n - 1) : (minX + maxX) / 2;
-      x = clamp(x + rand(-0.35, 0.35) * sp + (row % 2 ? sp * 0.4 : 0), minX, maxX);
-      capsules.push(makeCapsule(o, x, floorY(s) - row * s * 0.74, s));
-    });
+    const s = capSize(opts.length);
+    pileSlots(opts.length, s).forEach((p, i) => capsules.push(makeCapsule(opts[i], p.x, p.y, s)));
     settle(true); // let the jittered pile drop into a messy heap
     renderClaw();
+  }
+
+  // rough rows of positions across the machine floor, jittered so the pile looks messy
+  function pileSlots(count, s) {
+    const sp = widthPct(s);
+    const minX = 22 + sp / 2, maxX = 97 - sp / 2;
+    const perRow = Math.max(1, Math.floor((maxX - minX) / (sp * 1.08)) + 1);
+    const slots = [];
+    for (let i = 0; i < count; i++) {
+      const row = Math.floor(i / perRow), col = i % perRow;
+      const n = Math.min(perRow, count - row * perRow);
+      let x = n > 1 ? minX + (col * (maxX - minX)) / (n - 1) : (minX + maxX) / 2;
+      x = clamp(x + rand(-0.35, 0.35) * sp + (row % 2 ? sp * 0.4 : 0), minX, maxX);
+      slots.push({ x, y: floorY(s) - row * s * 0.74 });
+    }
+    return slots;
+  }
+
+  // 🫨 shake the machine: toss every capsule up, then let them land in a new random pile
+  const SHAKE = ["Lắc lắc lắc~ 🫨", "Xáo trộn hết nè! 🌀", "Rung rinh rung rinh 💃", "Lắc cho may mắn nha 🍀", "Động đất mini!! 😵‍💫"];
+  $("#shakeBtn").onclick = () => shake();
+  async function shake() {
+    if (busy || tab !== "claw" || needTwo()) return;
+    music.autoStart();
+    if (!capsules.length) setupClaw();
+    if (!capsules.length) return;
+    setBusy(true);
+    sfx.boing(); setTimeout(sfx.boing, 180);
+    say(pick(SHAKE));
+    const machine = $(".machine");
+    machine.classList.remove("shaking"); void machine.offsetWidth; machine.classList.add("shaking");
+    const slots = shuffle(pileSlots(capsules.length, capsules[0].s));
+    const H = box.clientHeight;
+    await Promise.all(capsules.map((c, i) =>
+      tween(c, { x: slots[i].x, y: rand(H * 0.12, H * 0.45) }, rand(320, 520), ease.inOut, renderClaw)));
+    await settle(); // fall from wherever they were tossed — a new random heap
+    machine.classList.remove("shaking");
+    setBusy(false);
   }
 
   // little "which emoji is which" key under the machine
@@ -268,16 +298,29 @@
   function settle(instant) {
     const done = [], anims = [];
     const W = box.clientWidth || 360;
-    for (const c of capsules.filter((c) => !c.attached).sort((a, b) => b.y - a.y)) {
+    const restY = (c, x) => {
       let y = floorY(c.s);
       // rest on a ball below where the two circles touch, so balls nestle into gaps
       for (const o of done) {
-        const dx = ((o.x - c.x) / 100) * W;
+        const dx = ((o.x - x) / 100) * W;
         if (Math.abs(dx) < c.s * 0.92) y = Math.min(y, o.ty - Math.sqrt(c.s * c.s - dx * dx) * 0.94);
       }
-      c.ty = y; done.push(c);
-      if (instant) c.y = y;
-      else if (Math.abs(y - c.y) > 1) anims.push(tween(c, { y }, 550, ease.bounce, renderClaw));
+      return y;
+    };
+    for (const c of capsules.filter((c) => !c.attached).sort((a, b) => b.y - a.y)) {
+      // "roll": look a little left/right and settle in the lowest nearby spot (no tall towers)
+      const sp = widthPct(c.s), minX = 22 + sp / 2, maxX = 97 - sp / 2;
+      let bestX = clamp(c.x, minX, maxX), bestScore = -Infinity, bestY = 0;
+      for (const k of [0, -0.3, 0.3, -0.6, 0.6, -0.9, 0.9, -1.2, 1.2]) {
+        const x = clamp(c.x + k * sp, minX, maxX);
+        const y = restY(c, x);
+        const score = y - Math.abs(k) * c.s * 0.12; // prefer staying put when it's about as low
+        if (score > bestScore) { bestScore = score; bestX = x; bestY = y; }
+      }
+      c.ty = bestY; c.tx = bestX; done.push({ x: bestX, ty: bestY });
+      if (instant) { c.x = bestX; c.y = bestY; }
+      else if (Math.abs(bestY - c.y) > 1 || Math.abs(bestX - c.x) > 0.2)
+        anims.push(tween(c, { x: bestX, y: bestY }, 600, ease.bounce, renderClaw));
     }
     return Promise.all(anims);
   }
