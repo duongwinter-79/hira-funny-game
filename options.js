@@ -12,15 +12,19 @@
 // backgroundImage: drop your character picture at this path (PNG with a
 //   transparent background looks best). If the file isn't there, the site
 //   uses its built-in pink bunny mascot instead.
+//
+// musicVideoId: the YouTube video used as background music (the part after
+//   "watch?v=" in the link). Set to "" to turn music off.
 
 window.CONFIG = {
   title: "Linh ơi mình ăn gì thế",
   friendName: "Linh",
   backgroundImage: "assets/melody.png",
+  musicVideoId: "hGu7BVQy5G0",
 
   restaurants: [
-    { name: "Túi mù sít rịt",      emoji: "🎁", note: "Bóc túi mù thôiii, hên xui nha~ 🎁" },
-    { name: "Tokyo Tan Tan Ramen", emoji: "🍥", note: "Giờ húp mì mè cay nè! 🔥" },
-    { name: "Ottugi Restaurant",   emoji: "🍲", note: "Món Hàn ấm bụng ấm lòng 💕" },
+    { name: "Túi mù sít rịt",      emoji: "🎁", note: "Oithoichec chị em đợi bất ngờ nhó 🎁" },
+    { name: "Tokyo Tan Tan Ramen", emoji: "🍥", note: "Đi Nhật ăn mì ramieng thoiii 🍜" },
+    { name: "Ottugi Restaurant",   emoji: "🍲", note: "Đi Hàn ăn nướng thoiii 🥩" },
   ],
 };

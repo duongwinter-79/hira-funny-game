@@ -316,6 +316,7 @@
   $("#dropBtn").onclick = () => drop();
   async function drop() {
     if (busy || tab !== "claw" || needTwo()) return;
+    music.autoStart();
     if (capsules.length < 2) setupClaw();
     stopMove(); setBusy(true);
     tries++; $("#tries").textContent = tries;
@@ -408,6 +409,7 @@
   $("#raceBtn").onclick = () => startRace();
   async function startRace() {
     if (busy || tab !== "race" || needTwo()) return;
+    music.autoStart();
     setupRace(); setBusy(true);
     say("Ai sẽ thắng đây?! Không dám nhìn 🙈");
     for (const n of ["3", "2", "1"]) { ticker(`⏱️ ${n}…`); sfx.beep(false); await sleep(650); }
@@ -471,7 +473,7 @@
     $("#againBtn").focus({ preventScroll: true });
   }
   function closeModal() { $("#modal").hidden = true; }
-  $("#againBtn").onclick = () => { closeModal(); resetCurrentGame(); say("Nữa hả?! Ok ok, thêm lần nữa 😆"); };
+  $("#againBtn").onclick = () => { closeModal(); resetCurrentGame(); say("Tôi cho phép chị chơi lại đấy nhé"); };
   $("#vetoBtn").onclick = () => {
     if (vetoLeft <= 0 || !lastWinner) return;
     vetoLeft--;
@@ -498,6 +500,68 @@
     }
   }
 
+  // ═════════════════ MUSIC (YouTube embed) ═════════════════
+  // Plays as soon as the page loads. Browsers block sound until the visitor
+  // interacts, so if that happens we play muted and turn the sound on at the
+  // first tap / click / key press anywhere on the page.
+  const music = (() => {
+    const id = C.musicVideoId;
+    const btn = $("#musicBtn"), toggle = $("#musicToggle");
+    let player = null, ready = false, playing = false, unlocked = false, skipToggle = false, blockedMuted = false;
+
+    function paint() {
+      btn.textContent = playing ? "🎶" : "🎵";
+      btn.classList.toggle("playing", playing);
+      toggle.textContent = playing ? "⏸ Tạm dừng" : "▶ Bật nhạc";
+    }
+    function applyMute() { if (ready) (muted || (blockedMuted && !unlocked)) ? player.mute() : player.unMute(); }
+    function play() { if (ready) { applyMute(); player.playVideo(); } }
+    function toggleMusic() {
+      if (!id) return;
+      if (skipToggle) { skipToggle = false; return; } // this same tap just switched the sound on
+      if (!ready) return say(window.YT ? "Nhạc đang tải, đợi xíu nha 🎶" : "Không tải được nhạc 🥲 Kiểm tra mạng thử nha");
+      if (playing) player.pauseVideo();
+      else { play(); if (muted) say("Đang tắt tiếng đó nha, bấm 🔇 để nghe nhạc 🎧"); }
+    }
+    function unlock(e) {
+      if (unlocked) return;
+      unlocked = true;
+      // tapping 🎵 itself as the first tap should just turn the sound on, not pause
+      skipToggle = blockedMuted && e.target instanceof Element && !!e.target.closest("#musicBtn, #musicToggle");
+      ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.removeEventListener(ev, unlock, true));
+      if (ready && blockedMuted) { applyMute(); player.playVideo(); }
+    }
+    if (!id) { $("#musicCard").hidden = true; btn.hidden = true; return { autoStart() {}, applyMute() {} }; }
+    ["pointerdown", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, unlock, true));
+
+    window.onYouTubeIframeAPIReady = () => {
+      player = new YT.Player("ytPlayer", {
+        host: "https://www.youtube-nocookie.com",
+        videoId: id,
+        playerVars: { autoplay: 1, loop: 1, playlist: id, playsinline: 1, rel: 0 },
+        events: {
+          onReady: () => {
+            ready = true; play();
+            // if the browser refused to play with sound, play muted until the first tap
+            setTimeout(() => {
+              if (!playing && !unlocked) { blockedMuted = true; play(); }
+            }, 1200);
+          },
+          onStateChange: (e) => { playing = e.data === YT.PlayerState.PLAYING; paint(); },
+        },
+      });
+    };
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    tag.async = true;
+    document.head.append(tag);
+
+    btn.onclick = toggleMusic;
+    toggle.onclick = toggleMusic;
+    paint();
+    return { autoStart() { if (ready && !playing && !unlocked) play(); }, applyMute };
+  })();
+
   // ═════════════════ BOOT ═════════════════
   $("#title").textContent = C.title || "Mình ăn gì thế";
   if (C.title) document.title = C.title + " 🍓";
@@ -505,7 +569,7 @@
 
   const muteBtn = $("#muteBtn");
   const paintMute = () => (muteBtn.textContent = muted ? "🔇" : "🔊");
-  muteBtn.onclick = () => { muted = !muted; save("mfp.muted", muted); paintMute(); sfx.pop(); };
+  muteBtn.onclick = () => { muted = !muted; save("mfp.muted", muted); paintMute(); music.applyMute(); sfx.pop(); };
   paintMute();
 
   if (C.backgroundImage) {
